@@ -4,7 +4,7 @@ let request = require('request')
 let querystring = require('querystring')
 // let fs = require('fs')
 
-console.log(process.env.SPOTIFY_CLIENT_ID,process.env.SPOTIFY_CLIENT_SECRET)
+//console.log(process.env.SPOTIFY_CLIENT_ID,process.env.SPOTIFY_CLIENT_SECRET)
 let app = express()
 
 let redirect_uri = 
@@ -16,7 +16,7 @@ app.get('/login', function(req, res) {
     querystring.stringify({
       response_type: 'code',
       client_id: process.env.SPOTIFY_CLIENT_ID,
-      scope: 'user-read-private user-read-email',
+      scope: 'user-read-private user-read-email user-library-read user-top-read',
       redirect_uri
     }))
 })
@@ -39,7 +39,7 @@ app.get('/callback', function(req, res) {
     },
     json: true
   }
-  console.log(authOptions)
+  //console.log(authOptions)
   request.post(authOptions, function(error, response, body) {
     if (!error){
       console.log(body)
