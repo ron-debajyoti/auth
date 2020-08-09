@@ -1,4 +1,4 @@
-# OAuth bridge template
+# Backend service for easy-visualify
 
 This service logs in to Spotify and redirects the user to a given frontend application with a valid access_token as a parameter in the url.
 
@@ -11,14 +11,15 @@ https://developer.spotify.com/my-applications
 
 On that page, add http://localhost:8888 as a callback url (don't forget to hit save at the bottom of the page)
 
-Write the below commands in your terminal (replacing XXXX AND YYYY with your acutal client id and secret from the page where you registered your application)
-
+Write the below commands in your .env file:
 ```
-export SPOTIFY_CLIENT_ID=XXXX
-export SPOTIFY_CLIENT_SECRET=YYYY
+SPOTIFY_CLIENT_ID=XXXX
+SPOTIFY_CLIENT_SECRET=YYYY
+```
+Then start the server by typing:
+`
 npm start
-```
-
+`
 Then go to http://localhost:8888/login in your browser. This will initiate the login flow and finally redirect to http://localhost:3000?access_token=ZZZZZ where ZZZZZ is a valid access token that you can use to do operations in the Spotify API.
 
 ## Deploying to production
