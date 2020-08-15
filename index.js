@@ -21,6 +21,8 @@ app.get('/login', function(req, res) {
     }))
 })
 
+
+
 app.get('/callback', function(req, res) {
 
   let code = req.query.code || null
@@ -42,10 +44,15 @@ app.get('/callback', function(req, res) {
   //console.log(authOptions)
   request.post(authOptions, function(error, response, body) {
     if (!error){
-      console.log(body)
       var access_token = body.access_token
-      let uri = process.env.FRONTEND_URI || 'http://localhost:3000'
-      res.redirect(uri + '?access_token=' + access_token)
+      var refresh_token = body.refresh_token
+
+      let uri = process.env.FRONTEND_URI || 'http://localhost:3000/main'
+      //res.redirect(uri + '?access_token=' + access_token)
+      res.redirect(uri + '/?' + querystring.stringify({
+        access_token: access_token,
+        refresh_token: refresh_token
+      }))
     }
     else
       throw error;
