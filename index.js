@@ -16,7 +16,7 @@ app.get('/login', function(req, res) {
     querystring.stringify({
       response_type: 'code',
       client_id: process.env.SPOTIFY_CLIENT_ID,
-      scope: 'user-read-private user-read-email user-library-read user-top-read',
+      scope: 'user-read-private user-read-email user-library-read user-top-read user-follow-read',
       redirect_uri
     }))
 })
@@ -47,7 +47,7 @@ app.get('/callback', function(req, res) {
       var access_token = body.access_token
       var refresh_token = body.refresh_token
 
-      let uri = process.env.FRONTEND_URI || 'http://localhost:3000/main'
+      let uri = process.env.FRONTEND_URI || 'http://localhost:5000/main'
       //res.redirect(uri + '?access_token=' + access_token)
       res.redirect(uri + '/?' + querystring.stringify({
         access_token: access_token,
@@ -59,6 +59,36 @@ app.get('/callback', function(req, res) {
     
   })
 })
+
+app.get('/refresh_token', function(req, res) {
+  let refresh_token = req.query.refresh_token
+  let authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    form: {
+      refresh_token,
+      grant_type: 'refresh_token'
+    },
+    headers: {
+      'Authorization': 'Basic ' + (new Buffer(
+        process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
+      ).toString('base64'))
+    },
+    json: true
+  }
+
+  request.post(authOptions, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        const access_token = body.access_token;
+        res.send({ access_token });
+      }
+      else{
+        throw error
+      }
+    });
+
+})
+
+
 
 let port = process.env.PORT || 8888
 console.log(`Listening on port ${port}. Go /login to initiate authentication flow.`)
