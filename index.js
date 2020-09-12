@@ -47,7 +47,7 @@ app.get('/callback', function(req, res) {
       var access_token = body.access_token
       var refresh_token = body.refresh_token
 
-      let uri = process.env.FRONTEND_URI || 'http://localhost:5000/main'
+      let uri = process.env.FRONTEND_URI || 'http://localhost:3000/main'
       //res.redirect(uri + '?access_token=' + access_token)
       res.redirect(uri + '/?' + querystring.stringify({
         access_token: access_token,
@@ -78,7 +78,7 @@ app.get('/refresh_token', function(req, res) {
 
   request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
-        const access_token = body.access_token;
+        var access_token = body.access_token;
         res.send({ access_token });
       }
       else{
