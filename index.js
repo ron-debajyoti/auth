@@ -1,6 +1,7 @@
 require('dotenv').config()
 let express = require('express')
 let request = require('request')
+let cors = require('cors')
 let querystring = require('querystring')
 // let fs = require('fs')
 
@@ -10,6 +11,21 @@ let app = express()
 let redirect_uri = 
   process.env.REDIRECT_URI || 
   'http://localhost:8888/callback'
+
+// app.all('/*', (req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//   next();
+// });
+
+app.use(cors());
+app.use('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", 'OPTIONS, GET, PUT, PATCH, POST, DELETE');
+    res.header("Access-Control-Allow-Headers", "refresh_token, Origin, X-Requested-With, Content-Type, Accept");
+    next();
+   });
+
 
 app.get('/login', function(req, res) {
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -61,7 +77,7 @@ app.get('/callback', function(req, res) {
 })
 
 app.get('/refresh_token', function(req, res) {
-  let refresh_token = req.query.refresh_token
+  let refresh_token = req.headers.refresh_token
   let authOptions = {
     url: 'https://accounts.spotify.com/api/token',
     form: {
@@ -79,7 +95,7 @@ app.get('/refresh_token', function(req, res) {
   request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         var access_token = body.access_token;
-        res.send({ access_token });
+        res.send({access_token})
       }
       else{
         throw error
